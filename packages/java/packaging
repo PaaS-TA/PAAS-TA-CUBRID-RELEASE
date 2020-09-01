@@ -1,0 +1,31 @@
+set -e -x
+
+PKG_NAME="jdk8u212-b03-jre"
+
+# CHECK OS
+if [[ `uname -a` =~ "x86_64" ]] ; then
+  ARCHIVE="java/OpenJDK8U-jre_x64_linux_hotspot_8u212b03.tar.gz"
+else
+  echo "32-bit Java not supported. Only 64-bit architectures are supported."
+  exit 1
+fi
+
+# CHECK EXISTED
+if [[ -f ${ARCHIVE} ]] ; then
+  echo "Archive found"
+else
+  echo "Archive not found"
+  exit 1
+fi
+
+# EXTRACT
+echo "Extracting ARCHIVE"
+tar xzf ${ARCHIVE}
+
+# COPY 
+if [[ -d ${PKG_NAME}/bin && `${PKG_NAME}/bin/java -version 2>&1` =~ "OpenJDK Runtime Environment" && $? == 0 ]]; then
+  cp -a ${PKG_NAME}/* ${BOSH_INSTALL_TARGET}
+else
+  echo "JVM is not properly packaged"
+  exit 1
+fi

@@ -6,9 +6,20 @@ templates:
   cubrid_broker.conf.erb: config/cubrid_broker.conf
   cubrid_broker_init.sql.erb: config/cubrid_broker_init.sql
   .cubrid.sh.erb: config/.cubrid.sh
+  pre-start.erb: bin/pre-start
+  ssh/certificate.pub.erb: ssh/certificate.pub
+  ssh/private_key.pem.erb: ssh/private_key.pem
 
 packages:
   - cubrid
+
+provides:
+  - name: cubrid_link
+    type: cubrid
+
+consumes:
+  - name: cubrid_broker_link
+    type: cubrid_broker
 
 properties:
   cubrid.cubrid_port_id:
@@ -26,7 +37,7 @@ properties:
   cubrid.broker_broker1_broker_port:
     description: 'The port number of the broker(broker1). The value must be unique and smaller than 65,535.'
     default: 33000
-  cubrid_broker.cubrid_db_name:
-    description: ''
-  cubrid_broker.cubrid_db_passwd:
-    description: ''
+  cubrid.certificate:
+    description: 'Certificate for cubrid'
+  cubrid.private_key:
+    description: 'Private key for cubrid'

@@ -55,9 +55,9 @@ do
 done
 export TMPDIR=$TMP_DIR
 
-if [[ -d /var/vcap/packages/java7 ]]
+if [[ -d /var/vcap/packages/java ]]
 then
-  export JAVA_HOME="/var/vcap/packages/java7"
+  export JAVA_HOME="/var/vcap/packages/java"
 fi
 
 # setup CLASSPATH for all jars/ folders within packages

@@ -1,5 +1,23 @@
 #!/bin/bash
 
+JOB_NAME=cubrid
+export JOB_DIR=/var/vcap/jobs/${JOB_NAME}
+export PKG_DIR=/var/vcap/packages/${JOB_NAME}
+DATA_DIR=/var/vcap/data/packages/${JOB_NAME}
+RUN_DIR=/var/vcap/sys/run/${JOB_NAME}
+LOG_DIR=/var/vcap/sys/log/${JOB_NAME}
+
+function setup_environment() {
+  for dir in ${RUN_DIR} ${LOG_DIR}
+  do
+    mkdir -p ${dir}
+    chown -R vcap:vcap ${dir}
+    chmod -R 775 ${dir}
+    echo "##### SETUP_ENVIRONMENT :: ${JOB_NAME} :: ${dir}"
+  done
+  chmod -R 777 /tmp
+}
+
 #cubrid env
 if [[ ! `cat /etc/bash.bashrc|grep '#cubrid env'` ]];
 then
@@ -19,35 +37,35 @@ then
   service ssh restart
 fi
 
-export CUBRID_JOB_DIR=/var/vcap/jobs/cubrid
-export CUBRID_PACKAGE_DIR=/var/vcap/packages/cubrid
-RUN_DIR=/var/vcap/sys/run/cubrid
-LOG_DIR=/var/vcap/sys/log/cubrid
+setup_environment
 
 case $1 in
 
   start)
-    mkdir -p $RUN_DIR $LOG_DIR
-    chown -R vcap:vcap $RUN_DIR $LOG_DIR
 
     #if cubrid_broker database not exitst, create database for cubrid_broker
-    if [[ ! -f $CUBRID_DATABASES/databases.txt || !`cat $CUBRID_DATABASES/databases.txt|grep <%= p('cubrid_broker.cubrid_db_name')%>` ]]
+    if [[ ! -f $CUBRID_DATABASES/databases.txt || !`cat $CUBRID_DATABASES/databases.txt|grep <%= link('cubrid_broker_link').p('cubrid_broker.cubrid_db_name') %>` ]]
     then
-        mkdir -p $CUBRID_DATABASES/<%= p('cubrid_broker.cubrid_db_name')%>
-        cd $CUBRID_DATABASES/<%= p('cubrid_broker.cubrid_db_name')%>
-        cubrid createdb --csql-initialization-file=$CUBRID_JOB_DIR/config/cubrid_broker_init.sql <%= p('cubrid_broker.cubrid_db_name')%> ko_KR.utf8
+        mkdir -p $CUBRID_DATABASES/<%= link('cubrid_broker_link').p('cubrid_broker.cubrid_db_name') %>
+        cd $CUBRID_DATABASES/<%= link('cubrid_broker_link').p('cubrid_broker.cubrid_db_name') %>
+        cubrid createdb --csql-initialization-file=$JOB_DIR/config/cubrid_broker_init.sql <%= link('cubrid_broker_link').p('cubrid_broker.cubrid_db_name') %> ko_KR.utf8
     fi
 
     #link config file
-    ln -sf $CUBRID_JOB_DIR/config/cubrid.conf $CUBRID_PACKAGE_DIR/CUBRID/conf/cubrid.conf
-    ln -sf $CUBRID_JOB_DIR/config/cubrid_broker.conf $CUBRID_PACKAGE_DIR/CUBRID/conf/cubrid_broker.conf
+    ln -sf $JOB_DIR/config/cubrid.conf $PKG_DIR/CUBRID/conf/cubrid.conf
+    ln -sf $JOB_DIR/config/cubrid_broker.conf $PKG_DIR/CUBRID/conf/cubrid_broker.conf
 
     #link log directory
-    ln -sf $CUBRID_PACKAGE_DIR/CUBRID/log $LOG_DIR
+    ln -sf $PKG_DIR/CUBRID/log $LOG_DIR
+
+    chown -R vcap:vcap ${PKG_DIR}
+    chmod -R 775 ${PKG_DIR}
+    chown -R vcap:vcap ${DATA_DIR}
+    chmod -R 775 ${DATA_DIR}
 
     #start script
     cubrid service start
-    cubrid server start <%= p('cubrid_broker.cubrid_db_name')%>
+    cubrid server start <%= link('cubrid_broker_link').p('cubrid_broker.cubrid_db_name') %>
     ;;
 
   stop)

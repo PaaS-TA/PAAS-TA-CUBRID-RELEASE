@@ -21,6 +21,7 @@ ADMIN_LOG_FILE          =log/broker/cubrid_broker.log
 
 [%query_editor]
 SERVICE                 =ON
+SSL                     =OFF
 BROKER_PORT             =<%= p('cubrid.broker_query_editor_broker_port') %>
 MIN_NUM_APPL_SERVER     =5
 MAX_NUM_APPL_SERVER     =40
@@ -35,6 +36,7 @@ CCI_DEFAULT_AUTOCOMMIT  =ON
 
 [%BROKER1]
 SERVICE                 =ON
+SSL                     =OFF
 BROKER_PORT             =<%= p('cubrid.broker_broker1_broker_port') %>
 MIN_NUM_APPL_SERVER     =5
 MAX_NUM_APPL_SERVER     =40

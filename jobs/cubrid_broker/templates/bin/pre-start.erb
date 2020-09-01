@@ -1,0 +1,7 @@
+#!/bin/sh
+
+SSH_DIR=/var/vcap/jobs/cubrid_broker/ssh
+
+chmod 600 $SSH_DIR/private_key.pem
+
+ssh -i $SSH_DIR/private_key.pem vcap@<%= link('cubrid_link').instances[0].address%> -o StrictHostKeyChecking=no

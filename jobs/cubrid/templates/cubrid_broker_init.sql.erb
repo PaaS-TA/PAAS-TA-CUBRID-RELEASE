@@ -12,4 +12,4 @@ CREATE TABLE service_instance_bindings (
     INDEX index_db_user_name(db_user_name desc)
 );
 
-ALTER USER dba PASSWORD '<%= p('cubrid_broker.cubrid_db_passwd')%>'
+ALTER USER dba PASSWORD '<%= link('cubrid_broker_link').p('cubrid_broker.cubrid_db_passwd') %>'

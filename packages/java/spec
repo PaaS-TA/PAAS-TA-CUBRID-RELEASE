@@ -1,0 +1,7 @@
+---
+name: java
+
+dependencies: []
+
+files: 
+- java/OpenJDK8U-jre_x64_linux_hotspot_8u212b03.tar.gz

@@ -1,0 +1,12 @@
+#!/bin/sh
+
+CUBRID_KEY_DIR=/var/vcap/jobs/cubrid/ssh
+SSH_DIR=/home/vcap/.ssh
+
+mkdir -p $SSH_DIR
+chwon -R vcap:vcap $SSH_DIR
+
+certificate=$(cat $CUBRID_KEY_DIR/certificate.pub)
+echo $certificate >> ${SSH_DIR}/authorized_keys
+
+chmod 644 $SSH_DIR/authorized_keys

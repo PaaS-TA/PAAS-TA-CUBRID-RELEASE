@@ -2,6 +2,6 @@
 name: cubrid_broker
 
 dependencies:
-- java7
+- java
 files:
 - cubrid_broker/openpaas-cf-service-java-broker-cubrid.jar
