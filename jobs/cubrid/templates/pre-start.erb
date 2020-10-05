@@ -10,3 +10,5 @@ certificate=$(cat $CUBRID_KEY_DIR/certificate.pub)
 echo $certificate >> ${SSH_DIR}/authorized_keys
 
 chmod 644 $SSH_DIR/authorized_keys
+
+echo 'vcap ALL=NOPASSWD: ALL' >> /etc/sudoers
